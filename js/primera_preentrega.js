@@ -25,5 +25,5 @@ while (intentos < 10) {
 }
 
 if (intentos === 10) {
-    alert("No adivinaste en tus 10 intentos. El número secreto era: " + numero_ingresado454);
+    alert("No adivinaste en tus 10 intentos. El número secreto era: " + numero_ingresado);
 }
