@@ -21,6 +21,6 @@ while (intentos < 5) {
   }
 }
 
-if (intentos == 2) {
+if (intentos === 5) {
   alert("No adivinaste en tus 5 intentos. El número secreto era: " + numero_adivinar);
 }
