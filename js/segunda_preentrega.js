@@ -65,7 +65,7 @@ function agregarTareas() {
     alert(`Tarea eliminada: ${tareaEliminada.tarea}`);
   }
   
-  // Objeto literal para almacenar las tareas
+  // Objeto para almacenar las tareas
   let tareas = {
     lista: [], // Array para almacenar las tareas
   };
