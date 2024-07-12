@@ -1,16 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tareas</title>
     <link rel="stylesheet" href="./css/style.css">
-    <title>Primera pre-entrega</title>
 </head>
 <body>
-        <h1>Segunda Pre-entrega Js</h1>
-        <h2>Lista de tareas</h2>
-        <a href="./peges/lista.html"><button>IR A LA LISTA</button></a>
-        <p>Alumno David Vacis</p>
+    <h1>Lista de Tareas</h1>
+
+    <div id="contenedor-botones">
+        <form id="form-nombre-lista">
+            <input type="text" id="input-nombre-lista" placeholder="Ingrese el nombre de la lista" required>
+            <button type="button" id="btn-verificar-lista">Verificar lista</button>
+            <button type="button" id="btn-eliminar-lista" style="display:none;">Eliminar lista</button>
+        </form>
+        <form id="form-agregar">
+            <input type="text" id="input-tarea" placeholder="Ingrese una tarea" required>
+            <button type="submit" id="btn-agregar">Agregar tarea</button>
+        </form>
+        <form id="form-eliminar">
+            <input type="text" id="input-nombre-eliminar" placeholder="Ingrese el nombre de la tarea" required>
+            <button type="submit" id="btn-eliminar">Eliminar tarea</button>
+        </form>
+        <button id="btn-listar">Limpiar lista</button>
+        <button id="btn-guardar-lista" onclick="guardarLista()">Guardar lista</button>
+        <button id="btn-limpiar-campos" onclick="limpiarCampos()">Limpiar campos</button>
+    </div>
+
+    <div id="contenedor-tareas"></div>
+
+    <script src="./js/entrega_final.js"></script>
 </body>
+
 
 </html>
