@@ -1,0 +1,18 @@
+[
+    {
+        "nombre": "David",
+        "tareas": [
+            "codear",
+            "hacer trabajo de Js",
+            "lavar auto"
+        ]
+    },
+    {
+        "nombre": "Santiago",
+        "tareas": [
+            "bañar perros",
+            "jugar con Valen",
+            "hacer compras"
+        ]
+    }
+]

@@ -1,44 +1,69 @@
 // Objeto para almacenar las listas de tareas
 let listas = {};
 
-// Función para cargar las listas desde localStorage
-function cargarListas() {
-    const listasGuardadas = localStorage.getItem('listas');
-    if (listasGuardadas) {
-        listas = JSON.parse(listasGuardadas);
+// Función para cargar las listas desde el archivo JSON
+async function cargarListas() {
+    try {
+        const respuesta = await fetch('./tareas.json');
+        const data = await respuesta.json();
+        data.forEach(lista => {
+            listas[lista.nombre] = {
+                lista: lista.tareas.map((tarea, index) => ({
+                    id: index + 1,
+                    tarea: tarea
+                })),
+                idCounter: lista.tareas.length + 1
+            };
+        });
+        mostrarTareas();
+    } catch (error) {
+        console.error("Error al cargar las listas:", error);
     }
-    mostrarTareas();
-}
-
-// Función para guardar las listas en localStorage
-function guardarListas() {
-    localStorage.setItem('listas', JSON.stringify(listas));
 }
 
 // Función para verificar si la lista ya existe
 function verificarLista() {
     const nombreLista = document.getElementById('input-nombre-lista').value.trim();
-    if (listas[nombreLista]) {
-        alert(`La lista "${nombreLista}" ya existe.`);
-        mostrarTareas(); // Mostrar tareas de la lista existente
-        document.getElementById('btn-eliminar-lista').style.display = 'inline-block'; // Mostrar botón de eliminar lista
-    } else {
-        alert(`La lista "${nombreLista}" no existe.`);
-        document.getElementById('contenedor-tareas').innerHTML = '<p>No hay tareas en esta lista.</p>';
-        document.getElementById('btn-eliminar-lista').style.display = 'none'; // Ocultar botón de eliminar lista
+    const mensaje = document.getElementById('mensaje');
+    
+    if (nombreLista === "") {
+        mensaje.textContent = ""; 
+        limpiarTareas();
+        document.getElementById('btn-eliminar-lista').style.display = 'none';
+        return;
     }
+
+    if (listas[nombreLista]) {
+        mensaje.textContent = `La lista "${nombreLista}" ya existe.`;
+        mostrarTareas();
+        document.getElementById('btn-eliminar-lista').style.display = 'inline-block';
+    } else {
+        mensaje.textContent = `La lista "${nombreLista}" no existe.`;
+        limpiarTareas();
+        document.getElementById('btn-eliminar-lista').style.display = 'none';
+    }
+}
+
+// Función para limpiar tareas
+function limpiarTareas() {
+    const contenedorTareas = document.getElementById('contenedor-tareas');
+    contenedorTareas.innerHTML = '<p>No hay tareas en esta lista.</p>';
+    document.getElementById('nombre-lista').textContent = ''; 
 }
 
 // Función para eliminar la lista
 function eliminarLista() {
     const nombreLista = document.getElementById('input-nombre-lista').value.trim();
+    const mensaje = document.getElementById('mensaje');
+    
+    if (nombreLista === "") return; 
+
     if (listas[nombreLista]) {
         delete listas[nombreLista];
-        guardarListas();
-        alert(`Lista "${nombreLista}" fue eliminada.`);
+        mensaje.textContent = `Lista "${nombreLista}" fue eliminada.`;
         limpiarCampos();
     } else {
-        alert(`La lista "${nombreLista}" no existe.`);
+        mensaje.textContent = `La lista "${nombreLista}" no existe.`;
     }
 }
 
@@ -48,9 +73,15 @@ function agregarTarea(event) {
     const nombreLista = document.getElementById('input-nombre-lista').value.trim();
     const tareaInput = document.getElementById('input-tarea');
     const tarea = tareaInput.value.trim();
+    const mensaje = document.getElementById('mensaje');
+
+    if (nombreLista === "") {
+        mensaje.textContent = "Error: Debe especificar el nombre de la lista.";
+        return;
+    }
 
     if (tarea === "") {
-        alert("Error: La lista no puede estar vacía.");
+        mensaje.textContent = "Error: La tarea no puede estar vacía.";
         return;
     }
 
@@ -63,33 +94,30 @@ function agregarTarea(event) {
         tarea,
     });
 
-    alert("Tarea agregada exitosamente.");
+    mensaje.textContent = "Tarea agregada exitosamente.";
     tareaInput.value = '';
-    guardarListas();
     mostrarTareas();
 }
 
-// Función para eliminar una tarea por nombre
+// Función para eliminar una tarea por ID
 function eliminarTarea(event) {
     event.preventDefault();
     const nombreLista = document.getElementById('input-nombre-lista').value.trim();
-    const tareaEliminar = document.getElementById('input-nombre-eliminar').value.trim();
+    const idEliminar = parseInt(document.getElementById('input-id-eliminar').value.trim());
+    const mensaje = document.getElementById('mensaje');
 
     if (!listas[nombreLista]) {
-        alert("Error: La lista no existe.");
+        mensaje.textContent = "Error: La lista no existe.";
         return;
     }
 
-    const indice = listas[nombreLista].lista.findIndex(tarea => tarea.tarea === tareaEliminar);
+    const indice = listas[nombreLista].lista.findIndex(tarea => tarea.id === idEliminar);
     if (indice === -1) {
-        alert(`Error: Tarea "${tareaEliminar}" no encontrada.`);
+        mensaje.textContent = `Error: Tarea con ID "${idEliminar}" no encontrada.`;
         return;
     }
 
-    const tareaEliminada = listas[nombreLista].lista.splice(indice, 1)[0];
-    alert(`Tarea eliminada: ${tareaEliminada.tarea}`);
-    document.getElementById('input-nombre-eliminar').value = '';
-    guardarListas();
+    listas[nombreLista].lista.splice(indice, 1);
     mostrarTareas();
 }
 
@@ -97,12 +125,15 @@ function eliminarTarea(event) {
 function mostrarTareas() {
     const nombreLista = document.getElementById('input-nombre-lista').value.trim();
     const contenedorTareas = document.getElementById('contenedor-tareas');
+    const nombreListaElemento = document.getElementById('nombre-lista');
     contenedorTareas.innerHTML = '';
 
     if (!listas[nombreLista]) {
-        contenedorTareas.innerHTML = '<p>No hay tareas en esta lista.</p>';
+        limpiarTareas();
         return;
     }
+
+    nombreListaElemento.textContent = `Lista: ${nombreLista}`;
 
     const ul = document.createElement('ul');
     listas[nombreLista].lista.forEach(tarea => {
@@ -118,39 +149,36 @@ function mostrarTareas() {
 function limpiarCampos() {
     document.getElementById('input-nombre-lista').value = '';
     document.getElementById('input-tarea').value = '';
-    document.getElementById('input-nombre-eliminar').value = '';
+    document.getElementById('input-id-eliminar').value = '';
     document.getElementById('contenedor-tareas').innerHTML = '';
-    document.getElementById('btn-eliminar-lista').style.display = 'none'; // Ocultar botón de eliminar lista
+    document.getElementById('nombre-lista').textContent = ''; 
+    document.getElementById('btn-eliminar-lista').style.display = 'none';
+    document.getElementById('mensaje').textContent = '';
 }
 
 // Función para limpiar la lista de tareas
 function limpiarLista() {
     const nombreLista = document.getElementById('input-nombre-lista').value.trim();
+    const mensaje = document.getElementById('mensaje');
+
     if (!listas[nombreLista]) {
-        alert("Error: La lista no existe.");
+        mensaje.textContent = "Error: La lista no existe.";
         return;
     }
 
+    // Limpiar las tareas de la lista
     listas[nombreLista].lista = [];
-    listas[nombreLista].idCounter = 1; // Reiniciar el contador de ID
-    guardarListas();
-    mostrarTareas();
-}
-
-// Función para guardar la lista como objeto
-function guardarLista() {
-    const nombreLista = document.getElementById('input-nombre-lista').value.trim();
-    if (!listas[nombreLista]) {
-        alert("Error: La lista no existe. Debe crearla primero.");
-        return;
-    }
-    alert(`Lista "${nombreLista}" guardada con éxito.`);
+    listas[nombreLista].idCounter = 1; // Reiniciar el contador de IDs
+    mensaje.textContent = `La lista "${nombreLista}" ha sido limpiada.`;
+    
+    // Mostrar tareas actualizadas
+    mostrarTareas(); 
 }
 
 // Event listeners para los botones
 document.getElementById('form-agregar').addEventListener('submit', agregarTarea);
 document.getElementById('form-eliminar').addEventListener('submit', eliminarTarea);
-document.getElementById('btn-listar').addEventListener('click', limpiarLista);
+document.getElementById('btn-limpiar-lista').addEventListener('click', limpiarLista);
 document.getElementById('btn-verificar-lista').addEventListener('click', verificarLista);
 document.getElementById('btn-eliminar-lista').addEventListener('click', eliminarLista);
 

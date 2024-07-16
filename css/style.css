@@ -22,6 +22,7 @@ form {
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
+    flex-wrap: wrap;
 }
 
 input[type="text"], input[type="number"] {
@@ -29,7 +30,8 @@ input[type="text"], input[type="number"] {
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    width: 300px;
+    width: 100%;
+    max-width: 300px;
 }
 
 button {
@@ -45,6 +47,14 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+
+#mensaje, #nombre-lista {
+    width: 100%;
+    max-width: 300px;
+    margin: 10px auto;
+    text-align: center;
+    color: gray;
 }
 
 #contenedor-tareas {
@@ -69,4 +79,25 @@ li {
 p {
     text-align: center;
     color: #777;
+}
+
+
+@media (max-width: 768px) {
+    #contenedor-botones {
+        flex-direction: column;
+    }
+
+    form {
+        flex-direction: column;
+        width: 100%;
+        align-items: stretch;
+    }
+
+    input[type="text"], input[type="number"], button {
+        width: 100%;
+    }
+
+    button {
+        margin: 5px 0;
+    }
 }

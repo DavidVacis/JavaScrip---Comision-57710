@@ -20,18 +20,17 @@
             <button type="submit" id="btn-agregar">Agregar tarea</button>
         </form>
         <form id="form-eliminar">
-            <input type="text" id="input-nombre-eliminar" placeholder="Ingrese el nombre de la tarea" required>
+            <input type="number" id="input-id-eliminar" placeholder="Ingrese el ID de la tarea" required>
             <button type="submit" id="btn-eliminar">Eliminar tarea</button>
         </form>
-        <button id="btn-listar">Limpiar lista</button>
-        <button id="btn-guardar-lista" onclick="guardarLista()">Guardar lista</button>
+        <button id="btn-limpiar-lista">Limpiar lista</button>
         <button id="btn-limpiar-campos" onclick="limpiarCampos()">Limpiar campos</button>
     </div>
 
+    <div id="mensaje"></div>
+    <h2 id="nombre-lista"></h2>
     <div id="contenedor-tareas"></div>
 
     <script src="./js/entrega_final.js"></script>
 </body>
-
-
 </html>
